@@ -1,5 +1,6 @@
-
+# System / IDE files
+.vscode/
 .DS_Store
 
+# Compiled binaries
 bin/
-obj/

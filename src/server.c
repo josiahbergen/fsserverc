@@ -72,7 +72,7 @@ void server(unsigned short port) {
   printf("%d byte(s) reveived. (1024 max)\n", bytes_reveived);
 
   if (bytes_reveived == 0) {
-    printf("Client disconnnected.");
+    printf("Client disconnnected.\n");
   } else if (bytes_reveived == -1) {
     perror("Recv error");
     return;
