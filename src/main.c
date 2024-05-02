@@ -43,6 +43,9 @@ int main(int argc, char *argv[]) {
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
+
+  printf("Are you sure you want to quit?");
+
   printf("\n\033[0;90mQuitting...\033[0;37m\n");
 
   // clean up and exit

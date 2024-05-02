@@ -31,6 +31,13 @@
     return EXIT_ERROR;                                                         \
   }
 
+#define WARN(char)                                                             \
+  {                                                                            \
+    printf("\033[1;33mWarning: " WHITE char " (non-fatal): %s.\n",             \
+           strerror(errno));                                                   \
+    return EXIT_ERROR;                                                         \
+  }
+
 #define EXIT_SUCCESS 0;
 #define EXIT_ERROR 1;
 
@@ -58,7 +65,7 @@ int server(unsigned short port) {
   // create server's listening file descriptor
   const int listener = socket(PF_INET, SOCK_STREAM, 0);
   if (listener < 0) {
-    perror("Socket error");
+    ERROR("Socket error");
     return EXIT_ERROR;
   }
 
@@ -103,7 +110,7 @@ int server(unsigned short port) {
 
     // wait for a socket to be ready
     if (select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) == -1) {
-      ERROR("Select error");
+      WARN("Select error");
     }
 
     // check all the sockets in the read_fds set for events
@@ -116,7 +123,7 @@ int server(unsigned short port) {
           // set their file descriptor
           cfd = accept(listener, (struct sockaddr *)&caddr, &caddr_len);
           if (cfd == -1) {
-            ERROR("Accept error");
+            WARN("Accept error");
           } else {
             FD_SET(cfd, &main); // add to master set
             if (i > fdmax)
@@ -130,14 +137,14 @@ int server(unsigned short port) {
 
           // send handshake
           printf("Sending handshake data... ");
-          char obuffer[1] = {0x21};
+          char obuffer[1] = {0x01};
 
           printf("Buffer contents:");
           printBuffer(obuffer, 1);
 
           int bytes_sent = send(cfd, (void *)&obuffer, sizeof(obuffer), 0);
           if (bytes_sent == -1) {
-            ERROR("Send error");
+            WARN("Send error");
           }
           printf("%d byte(s) sent. (%lu expected.)\n", bytes_sent,
                  sizeof(obuffer));
@@ -149,7 +156,7 @@ int server(unsigned short port) {
           recvbytes = recv(i, recvbuf, sizeof(recvbuf), 0);
 
           if (recvbytes == -1) {
-            ERROR("Recv error");
+            WARN("Recv error");
           } else if (recvbytes == 0) {
             printf(YELLOW "Client %u has disconnnected." WHITE "\n", i);
             FD_CLR(i, &main);
