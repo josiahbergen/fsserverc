@@ -3,21 +3,33 @@
 
 clear
 
-echo "\033[0;90mSetting up...\033[0;37m"
+echo "Setting up..."
+echo;
 rm -rf bin
 mkdir -p bin
 
-echo "\033[0;90mCompiling...\033[0;37m"
+echo "Files to compile:"
 
-gcc -o bin/server src/main.c src/server.c -Wall -Wextra -g;
+search_dir="$(pwd)/src"
+files=''
+
+for entry in $(ls $search_dir/*); do
+    echo $entry
+    files+=" $entry"
+done
+
+echo;
+echo "Compiling..."
+
+gcc -o bin/server $files -Wall -Wextra -g -fsanitize=address;
 status=$?
 
-echo "\033[0;90mCompilation complete with status $status.\033[0;37m"
+echo "Compilation complete with status $status."
 
 if [ $status -eq 0 ]; then
-    echo "\033[0;90mRunning...\033[0;37m"
+    echo "Running..."
     echo;
     ./bin/server 64198
 else
-    echo "\033[1;31mCompilation failed.\033[0;37m See above for details."
+    echo "Compilation failed. See above for details."
 fi

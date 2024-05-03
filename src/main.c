@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   // run the server!
   int status = server(port);
 
-  printf("FSServer has quit. %s\033[0;37m\n",
+  printf("\nFSServer has quit. %s\033[0;37m\n",
          status == 1 ? "\033[1;31m[EXIT_ERROR]" : "\033[1;32m[EXIT_SUCCESS]");
 
   return 0;
@@ -43,13 +43,8 @@ int main(int argc, char *argv[]) {
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
-
-  printf("Are you sure you want to quit?");
-
   printf("\n\033[0;90mQuitting...\033[0;37m\n");
-
   // clean up and exit
-
-  printf("FSServer has quit. \033[1;32m[EXIT_SUCCESS]\033[0;37m\n");
+  printf("\nFSServer has quit. \033[1;32m[EXIT_SUCCESS]\033[0;37m\n");
   exit(0);
 }
