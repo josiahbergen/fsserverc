@@ -1,5 +1,6 @@
 
-# Temporary solution until I figure out how to use makefiles :(
+# Yeah I have no idea how to use makefiles :(
+# But hey, it works!
 
 clear
 
@@ -31,5 +32,6 @@ if [ $status -eq 0 ]; then
     echo;
     ./bin/server 64198
 else
+    echo;
     echo "Compilation failed. See above for details."
 fi
