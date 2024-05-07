@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/network.h"
 #include "../include/server.h"
 
 // set up signal handler
 void INThandler(int);
+
+int stop = 0;
 
 int main(int argc, char *argv[]) {
 
@@ -20,7 +23,7 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "\033[1;31mError\033[0;37m: Invalid port number "
                       ">:(\n\033[0;90mPlease specify a "
                       "port number greater than 1024.\033[0;37m\n");
-      return -1;
+      exit(1);
     }
 
   } else {
@@ -33,18 +36,17 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, INThandler);
 
   // run the server!
-  int status = server(port);
+  int status = server(port, (int *)&stop);
 
   printf("\nFSServer has quit. %s\033[0;37m\n",
          status == 1 ? "\033[1;31m[EXIT_ERROR]" : "\033[1;32m[EXIT_SUCCESS]");
 
-  return 0;
+  exit(status == 1 ? 1 : 0);
 }
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
   printf("\n\033[0;90mQuitting...\033[0;37m\n");
-  // clean up and exit
-  printf("\nFSServer has quit. \033[1;32m[EXIT_SUCCESS]\033[0;37m\n");
-  exit(0);
+  // tell the other function to clean up memory and stuff
+  stop = 1;
 }

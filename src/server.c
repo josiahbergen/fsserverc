@@ -42,7 +42,18 @@
 #define EXIT_SUCCESS 0;
 #define EXIT_ERROR 1;
 
-int server(unsigned short port) {
+typedef struct player {
+  char name[16];
+  int fd;
+  int id;
+  int room;
+  int coins;
+  int posx;
+  int posy;
+  struct player *next;
+} player;
+
+int server(unsigned short port, int *stop) {
 
   fd_set main;     // master file descriptor list
   fd_set read_fds; // temp file descriptor list for select()
@@ -59,6 +70,9 @@ int server(unsigned short port) {
   char sendbuf[1024];
   int sendbytes;
   memset((char *)&sendbuf, 0, sizeof(sendbuf));
+
+  // player list
+  player *players = NULL;
 
   // create server's listening file descriptor
   printf(GRAY "Creating server socket...\n");
@@ -112,8 +126,7 @@ int server(unsigned short port) {
 
   printf(WHITE "Waiting for new connections...\n");
 
-  while (1) {
-
+  while (*stop == FALSE) {
     read_fds = main; // copy the main set, as select() will modify it
 
     // wait for a socket to be ready
@@ -133,6 +146,7 @@ int server(unsigned short port) {
           if (cfd == -1) {
             WARN("Accept error");
           } else {
+            addplayer(&players, cfd, "ted");
             FD_SET(cfd, &main); // add to master set
             if (i > fdmax)
               fdmax = i;
@@ -172,5 +186,7 @@ int server(unsigned short port) {
     }
   }
   close(listener);
+  printf(RED "QUITTING...\n" WHITE "Cleaning up...");
+  freeplayers(players);
   return EXIT_SUCCESS;
 }

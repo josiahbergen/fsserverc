@@ -1,6 +1,5 @@
 
-# Yeah I have no idea how to use makefiles :(
-# But hey, it works!
+# Yeah... I have no idea how to use makefiles :(
 
 clear
 
@@ -14,7 +13,7 @@ echo "Files to compile:"
 search_dir="$(pwd)/src"
 files=''
 
-for entry in $(ls $search_dir/*); do
+for entry in $(ls $search_dir/*.c); do
     echo $entry
     files+=" $entry"
 done
