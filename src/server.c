@@ -9,6 +9,7 @@
 
 #include <sys/select.h>
 
+#include "../include/macros.h"
 #include "../include/network.h"
 
 // https://csperkins.org/teaching/2009-2010/networked-systems/lab04.pdf
@@ -16,44 +17,7 @@
 // https://www.gta.ufrj.br/ensino/eel878/sockets/index.html
 // https://www.csl.mtu.edu/cs4411.ck/www/NOTES/signal/install.html
 
-#define TRUE 1
-#define FALSE 0
-
-// terminal colors :)
-#define WHITE "\033[0;37m"
-#define GREEN "\033[0;32m"
-#define BGREEN "\033[1;32m"
-#define YELLOW "\033[0;33m"
-#define RED "\033[0;31m"
-#define GRAY "\033[0;90m"
-
-#define ERROR(char)                                                            \
-  {                                                                            \
-    printf("\n\033[1;31m" char WHITE ": %s.\n", strerror(errno));              \
-    return EXIT_ERROR;                                                         \
-  }
-
-#define WARN(char)                                                             \
-  {                                                                            \
-    printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",             \
-           strerror(errno));                                                   \
-  }
-
-#define EXIT_SUCCESS 0;
-#define EXIT_ERROR 1;
-
-typedef struct player {
-  char name[16];
-  int fd;
-  int id;
-  int room;
-  int coins;
-  int posx;
-  int posy;
-  struct player *next;
-} player;
-
-int server(unsigned short port, int *stop) {
+int server(unsigned short port, int *stop, player *players) {
 
   fd_set main;     // master file descriptor list
   fd_set read_fds; // temp file descriptor list for select()
@@ -71,11 +35,8 @@ int server(unsigned short port, int *stop) {
   int sendbytes;
   memset((char *)&sendbuf, 0, sizeof(sendbuf));
 
-  // player list
-  player *players = NULL;
-
   // create server's listening file descriptor
-  printf(GRAY "Creating server socket...\n");
+  printf("Creating server socket...\n");
 
   const int listener = socket(PF_INET, SOCK_STREAM, 0);
   if (listener < 0) {
@@ -84,7 +45,7 @@ int server(unsigned short port, int *stop) {
   }
 
   // server address (will be localhost:port)
-  printf(GRAY "Configuring...\n");
+  printf("Configuring...\n");
 
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
@@ -98,20 +59,20 @@ int server(unsigned short port, int *stop) {
   socklen_t caddr_len = sizeof(caddr);
 
   // bind the socket
-  printf(GRAY "Binding...\n");
+  printf("Binding...\n");
 
   if (bind(listener, (struct sockaddr *)&addr, sizeof(addr))) {
     ERROR("Bind error");
   }
 
   // listen on the port
-  printf(GRAY "Listening...\n");
+  printf("Listening...\n");
 
   if (listen(listener, 10)) { // 10 is the maximum pending connections
     ERROR("Listen error");
   }
 
-  printf(GRAY "Creating file descriptor sets...\n");
+  printf("Creating file descriptor sets...\n");
   // add the listener to the master set
   FD_SET(listener, &main);
 
@@ -119,7 +80,7 @@ int server(unsigned short port, int *stop) {
   fdmax = listener; // so far, it's this one
 
   // setup complete!
-  printf(GRAY "Setup complete!\n\n");
+  printf("Setup complete!\n\n");
 
   printf(BGREEN "Server is running! " WHITE "( " GRAY "%s:%d" WHITE " )\n",
          inet_ntoa(addr.sin_addr), (int)ntohs(addr.sin_port));
@@ -168,6 +129,7 @@ int server(unsigned short port, int *stop) {
 
           // data from an existing connection
           recvbytes = recv(i, recvbuf, sizeof(recvbuf), 0);
+          listplayers(players);
 
           if (recvbytes == -1) {
             // error
@@ -186,7 +148,5 @@ int server(unsigned short port, int *stop) {
     }
   }
   close(listener);
-  printf(RED "QUITTING...\n" WHITE "Cleaning up...");
-  freeplayers(players);
   return EXIT_SUCCESS;
 }

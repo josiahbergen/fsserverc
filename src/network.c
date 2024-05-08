@@ -1,52 +1,11 @@
-
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 
-#define TRUE 1
-#define FALSE 0
-
-// terminal colors :)
-#define WHITE "\033[0;37m"
-#define GREEN "\033[0;32m"
-#define BGREEN "\033[1;32m"
-#define YELLOW "\033[0;33m"
-#define RED "\033[0;31m"
-#define GRAY "\033[0;90m"
-
-#define ERROR(char)                                                            \
-  {                                                                            \
-    printf("\033[1;31m" char WHITE ": %s.\n", strerror(errno));                \
-    return EXIT_ERROR;                                                         \
-  }
-
-#define WARN(char)                                                             \
-  {                                                                            \
-    printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",             \
-           strerror(errno));                                                   \
-  }
-
-#define NET_PING 0
-#define NET_PLAYER_ESTABLISH 1
-#define NET_PLAYER_CONNECT 2
-#define NET_PLAYER_JOINED 3
-#define NET_PLAYER_DISCONNECT 4
-#define NET_PLAYER_MOVE 5
-#define NET_PLAYER_CHAT 6
-#define NET_PLAYER_CHANGE_ROOM 7
-
-typedef struct player {
-  char name[16];
-  int fd;
-  int id;
-  int room;
-  int coins;
-  int posx;
-  int posy;
-  struct player *next;
-} player;
+#include "../include/macros.h"
+#include "../include/network.h"
 
 struct packet {
   int type;
@@ -76,6 +35,9 @@ player *createplayer(int cfd, char *name) {
   // these are not set by default
   newplayer->next = NULL;
   newplayer->id = -1;
+
+  printf("Created player. Username %s, fd %d.\n", newplayer->name,
+         newplayer->fd);
 
   return newplayer;
 }

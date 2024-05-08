@@ -24,7 +24,7 @@ echo "Compiling..."
 gcc -o bin/server $files -Wall -Wextra -g
 
 # Add -fsanitize=address if memory errors happen.
-# It breaks things when run on Linux though.
+# It breaks things when run on Linux.
 
 status=$?
 

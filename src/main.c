@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../include/macros.h"
 #include "../include/network.h"
 #include "../include/server.h"
 
@@ -10,6 +11,9 @@
 void INThandler(int);
 
 int stop = 0;
+
+// initialize linked list of players
+player *players = NULL;
 
 int main(int argc, char *argv[]) {
 
@@ -36,7 +40,7 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, INThandler);
 
   // run the server!
-  int status = server(port, (int *)&stop);
+  int status = server(port, (int *)&stop, players);
 
   printf("\nFSServer has quit. %s\033[0;37m\n",
          status == 1 ? "\033[1;31m[EXIT_ERROR]" : "\033[1;32m[EXIT_SUCCESS]");
@@ -46,7 +50,9 @@ int main(int argc, char *argv[]) {
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
-  printf("\n\033[0;90mQuitting...\033[0;37m\n");
-  // tell the other function to clean up memory and stuff
-  stop = 1;
+  printf(RED "\nQUITTING...\n" GRAY "Cleaning up...\n" WHITE);
+  freeplayers(players);
+  printf(GRAY "Done.\n" WHITE);
+  printf("FSServer has quit. \033[1;32m[EXIT_SUCCESS]\n");
+  exit(1);
 }
