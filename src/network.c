@@ -71,7 +71,7 @@ player *createplayer(int cfd, char *name) {
   newplayer->posy = 0;
   newplayer->coins = 0;
   newplayer->room = 1;
-  strcpy(newplayer->name, name); // unsafe code? more like funsafe code
+  strcpy(newplayer->name, name); // unsafe? more like funsafe
 
   // these are not set by default
   newplayer->next = NULL;
