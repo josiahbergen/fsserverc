@@ -14,10 +14,11 @@ struct packet {
 };
 
 void printbuffer(char *buffer, int size) {
+  printf(GRAY);
   for (int i = 0; i < size; i++) {
     printf(" %02x", buffer[i]);
   }
-  printf("\n");
+  printf(WHITE "\n");
 }
 
 player *createplayer(int cfd, char *name) {
@@ -85,19 +86,23 @@ void freeplayers(player *head) {
 }
 
 void sendpacket(int cfd, char *sendbuf, int sendbytes) {
+  // int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
+  int sendbuftest[] = {0x01, 0x02, 0x03, 0x04, 0x05};
   int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
+
+
   if (bytes_sent == -1) {
     WARN("Send error");
   }
-  printf("%d byte(s) sent. (%d expected.)\nBuffer contents:", bytes_sent,
+  printf("%d byte(s) sent. (%d expected.)\n" GRAY "Buffer contents:", bytes_sent,
          sendbytes);
-  printbuffer(sendbuf, sendbytes);
+  printbuffer(sendbuftest, sendbytes);
 }
 
 int handlepacket(int cfd, char *recvbuf, int recvbytes) {
   // print the hex contents of the buffer
   printf("%d byte(s) received from client %u. (1024 max)\n", recvbytes, cfd);
-  printf("Received data:");
+  printf(GRAY "Received data:");
   printbuffer(recvbuf, recvbytes);
   // reset the buffer
   memset((char *)&recvbuf, 0, sizeof(recvbuf));

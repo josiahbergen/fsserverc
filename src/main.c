@@ -1,7 +1,9 @@
-#include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <errno.h>
 #include <string.h>
+
+#include <signal.h>
+#include <stdlib.h>
 
 #include "../include/macros.h"
 #include "../include/network.h"
@@ -18,6 +20,24 @@ player *players = NULL;
 int main(int argc, char *argv[]) {
 
   unsigned short port;
+
+  // printf("unsigned short: %lu\n", sizeof(unsigned short));
+  // printf("short: %lu\n", sizeof(short));
+  // printf("int: %lu\n", sizeof(int));
+  // printf("long: %lu\n", sizeof(long));
+  // printf("char: %lu\n", sizeof(char)); 
+
+  FILE *file = fopen("title.txt", "r");
+  if (file == NULL) {
+    WARN("File error");
+  }
+
+  char buffer[256];
+  while (fgets(buffer, sizeof(buffer), file) != NULL) {
+    printf("%s", buffer);
+  }
+
+  fclose(file);
 
   // check for command line args
   if (argc == 2) {
@@ -50,9 +70,8 @@ int main(int argc, char *argv[]) {
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
-  printf(RED "\nQUITTING...\n" GRAY "Cleaning up...\n" WHITE);
+  printf("\n\n" GRAY "Cleaning up...\n" WHITE);
   freeplayers(players);
-  printf(GRAY "Done.\n" WHITE);
-  printf("FSServer has quit. \033[1;32m[EXIT_SUCCESS]\n");
+  printf("FSServer has quit. \033[1;32m[EXIT_SUCCESS]\n" WHITE);
   exit(1);
 }

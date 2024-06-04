@@ -24,15 +24,16 @@ int server(unsigned short port, int *stop, player *players) {
   int fdmax;       // maximum file descriptor number
   int cfd;         // newly accept()ed socket descriptor
 
-  FD_ZERO(&main); // clear the master and temp sets
+  // clear the master and temp sets
+  FD_ZERO(&main);  
   FD_ZERO(&read_fds);
 
   char recvbuf[1024];
-  int recvbytes;
+  char recvbytes;
   memset((char *)&recvbuf, 0, sizeof(recvbuf));
 
   char sendbuf[1024];
-  int sendbytes;
+  char sendbytes;
   memset((char *)&sendbuf, 0, sizeof(sendbuf));
 
   // create server's listening file descriptor
@@ -62,7 +63,19 @@ int server(unsigned short port, int *stop, player *players) {
   printf("Binding...\n");
 
   if (bind(listener, (struct sockaddr *)&addr, sizeof(addr))) {
-    ERROR("Bind error");
+    WARN("Bind error");
+
+    // override option
+    printf("Override? [y/n] ");
+    char override = getchar();
+    if (override == 'y' || override == 'Y') {
+      int yes = 1;
+      if (setsockopt(listener,SOL_SOCKET,SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+          ERROR("setsockopt error");
+      }
+    } else {
+      return EXIT_ERROR;
+    }
   }
 
   // listen on the port
@@ -107,7 +120,6 @@ int server(unsigned short port, int *stop, player *players) {
           if (cfd == -1) {
             WARN("Accept error");
           } else {
-            addplayer(&players, cfd, "ted");
             FD_SET(cfd, &main); // add to master set
             if (i > fdmax)
               fdmax = i;
@@ -120,16 +132,15 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data... ");
-          sendbuf[1] = 0x01;
-          sendbytes = 1;
+          sendbuf[1] = 1;
+          sendbytes = 5;
 
-          sendpacket(cfd, (char *)&sendbuf, sendbytes);
+          sendpacket(cfd, (int *)&sendbuf, sendbytes);
 
         } else {
 
           // data from an existing connection
           recvbytes = recv(i, recvbuf, sizeof(recvbuf), 0);
-          listplayers(players);
 
           if (recvbytes == -1) {
             // error
@@ -141,7 +152,7 @@ int server(unsigned short port, int *stop, player *players) {
             close(i);
           } else {
             // regular data
-            handlepacket(i, (char *)&recvbuf, recvbytes);
+            handlepacket(i, (int *)&recvbuf, recvbytes);
           }
         }
       }
