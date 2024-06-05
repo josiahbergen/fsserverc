@@ -25,7 +25,7 @@ int server(unsigned short port, int *stop, player *players) {
   int cfd;         // newly accept()ed socket descriptor
 
   // clear the master and temp sets
-  FD_ZERO(&main);  
+  FD_ZERO(&main);
   FD_ZERO(&read_fds);
 
   char recvbuf[1024];
@@ -132,10 +132,10 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data... ");
-          sendbuf[1] = 1;
-          sendbytes = 5;
-
-          sendpacket(cfd, (int *)&sendbuf, sendbytes);
+          sendbuf[1] = (char)1;
+          sendbuf[2] = (char)0;
+          sendbuf[3] = (char)2;
+          sendpacket(cfd, (char *)&sendbuf, sendbytes);
 
         } else {
 
@@ -152,7 +152,7 @@ int server(unsigned short port, int *stop, player *players) {
             close(i);
           } else {
             // regular data
-            handlepacket(i, (int *)&recvbuf, recvbytes);
+            handlepacket(i, (char *)&recvbuf, recvbytes);
           }
         }
       }

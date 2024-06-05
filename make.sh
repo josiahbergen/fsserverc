@@ -29,14 +29,9 @@ done
 echo;
 echo "Compiling..."
 
-tmp_file=$(mktemp)
-
 # Run the compilation command inside a pseudo-terminal
-script -q -c "gcc -o $output_file $files $args" "$tmp_file"
+gcc $args -o $output_file $files
 status=$?
-
-# Print the content of the temporary file to the terminal (this retains colors)
-cat "$tmp_file"
 
 if [ $status -eq 1 ]; then
 
@@ -44,25 +39,7 @@ if [ $status -eq 1 ]; then
     echo;
     echo "Compilation failed. See above for details."
 
-elif grep -q "warning:" "$tmp_file"; then
-
-    # Compilation completed with warnings
-    echo;
-    echo "Compilation complete with warnings. Continue? (y/n)"
-
-    read action
-    if [ "$action" = "y" ]; then
-        ./bin/server 64198
-    else
-        echo "Exiting..."
-    fi
-
 else
-
     # Compilation completed successfully
     ./bin/server 64198
-
 fi
-
-rm "$tmp_file"
-

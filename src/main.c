@@ -25,19 +25,19 @@ int main(int argc, char *argv[]) {
   // printf("short: %lu\n", sizeof(short));
   // printf("int: %lu\n", sizeof(int));
   // printf("long: %lu\n", sizeof(long));
-  // printf("char: %lu\n", sizeof(char)); 
+  // printf("char: %lu\n", sizeof(char));
 
-  FILE *file = fopen("title.txt", "r");
-  if (file == NULL) {
-    WARN("File error");
-  }
+  // FILE *file = fopen("title.txt", "r");
+  // if (file == NULL) {
+  //   WARN("File error");
+  // }
 
-  char buffer[256];
-  while (fgets(buffer, sizeof(buffer), file) != NULL) {
-    printf("%s", buffer);
-  }
+  // char buffer[256];
+  // while (fgets(buffer, sizeof(buffer), file) != NULL) {
+  //   printf("%s", buffer);
+  // }
 
-  fclose(file);
+  // fclose(file);
 
   // check for command line args
   if (argc == 2) {

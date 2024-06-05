@@ -16,9 +16,16 @@ struct packet {
 void printbuffer(char *buffer, int size) {
   printf(GRAY);
   for (int i = 0; i < size; i++) {
-    printf(" %02x", buffer[i]);
+      printf(" ");
+      for(int i = 7; i >= 0; i--) {
+          printf("%d", (buffer[i] >> i) & 1);
+      }
   }
-  printf(WHITE "\n");
+  printf(" (");
+  for (int i = 0; i < size; i++) {
+    printf("%c", buffer[i]);
+  }
+  printf(")" WHITE "\n");
 }
 
 player *createplayer(int cfd, char *name) {
@@ -87,16 +94,14 @@ void freeplayers(player *head) {
 
 void sendpacket(int cfd, char *sendbuf, int sendbytes) {
   // int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
-  int sendbuftest[] = {0x01, 0x02, 0x03, 0x04, 0x05};
   int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
-
 
   if (bytes_sent == -1) {
     WARN("Send error");
   }
   printf("%d byte(s) sent. (%d expected.)\n" GRAY "Buffer contents:", bytes_sent,
          sendbytes);
-  printbuffer(sendbuftest, sendbytes);
+  printbuffer(sendbuf, sendbytes);
 }
 
 int handlepacket(int cfd, char *recvbuf, int recvbytes) {
