@@ -18,7 +18,6 @@ void freeplayers(struct player *head);
 void listplayers(struct player *head);
 
 int handlepacket(int cfd, char *recvbuf, int recvbytes);
-void sendpacket(int cfd, char *sendbuf, int sendbytes);
 void printbuffer(char *buffer, int size);
 
 #endif

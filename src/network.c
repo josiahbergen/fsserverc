@@ -6,6 +6,7 @@
 
 #include "../include/macros.h"
 #include "../include/network.h"
+#include "../include/buffer.h"
 
 struct packet {
   int type;
@@ -90,18 +91,6 @@ void freeplayers(player *head) {
     // BE FREE, MY CHILD
     free(temp);
   }
-}
-
-void sendpacket(int cfd, char *sendbuf, int sendbytes) {
-  // int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
-  int bytes_sent = send(cfd, (void *)sendbuf, sendbytes, 0);
-
-  if (bytes_sent == -1) {
-    WARN("Send error");
-  }
-  printf("%d byte(s) sent. (%d expected.)\n" GRAY "Buffer contents:", bytes_sent,
-         sendbytes);
-  printbuffer(sendbuf, sendbytes);
 }
 
 int handlepacket(int cfd, char *recvbuf, int recvbytes) {

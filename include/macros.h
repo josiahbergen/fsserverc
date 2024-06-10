@@ -36,4 +36,9 @@
 #define NET_PLAYER_CHAT 6
 #define NET_PLAYER_CHANGE_ROOM 7
 
+#define TYPE_INT 4
+#define TYPE_LONG 8
+#define TYPE_CHAR 1
+#define TYPE_STRING 0
+
 #endif

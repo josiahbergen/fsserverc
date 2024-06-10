@@ -11,6 +11,7 @@
 
 #include "../include/macros.h"
 #include "../include/network.h"
+#include "../include/buffer.h"
 
 // https://csperkins.org/teaching/2009-2010/networked-systems/lab04.pdf
 // https://en.wikibooks.org/wiki/C_Programming/Networking_in_UNIX
@@ -29,11 +30,11 @@ int server(unsigned short port, int *stop, player *players) {
   FD_ZERO(&read_fds);
 
   char recvbuf[1024];
-  char recvbytes;
+  int recvbytes;
   memset((char *)&recvbuf, 0, sizeof(recvbuf));
 
   char sendbuf[1024];
-  char sendbytes;
+  int sendbytes;
   memset((char *)&sendbuf, 0, sizeof(sendbuf));
 
   // create server's listening file descriptor
@@ -98,6 +99,7 @@ int server(unsigned short port, int *stop, player *players) {
   printf(BGREEN "Server is running! " WHITE "( " GRAY "%s:%d" WHITE " )\n",
          inet_ntoa(addr.sin_addr), (int)ntohs(addr.sin_port));
 
+  printf(GRAY "Press CTRL-C to quit.\n\n" WHITE);
   printf(WHITE "Waiting for new connections...\n");
 
   while (*stop == FALSE) {
@@ -132,10 +134,7 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data... ");
-          sendbuf[1] = (char)1;
-          sendbuf[2] = (char)0;
-          sendbuf[3] = (char)2;
-          sendpacket(cfd, (char *)&sendbuf, sendbytes);
+          buffer_write(&sendbuf, TYPE_INT, (char*)100, &sendbytes);
 
         } else {
 
