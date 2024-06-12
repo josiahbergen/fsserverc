@@ -18,8 +18,8 @@ void printbuffer(char *buffer, int size) {
   printf(GRAY);
   for (int i = 0; i < size; i++) {
       printf(" ");
-      for(int i = 7; i >= 0; i--) {
-          printf("%d", (buffer[i] >> i) & 1);
+      for(int j = 7; j >= 0; j--) {
+          printf("%d", (buffer[i] >> j) & 1);
       }
   }
   printf(" (");

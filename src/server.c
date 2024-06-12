@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <arpa/inet.h>
@@ -33,9 +34,9 @@ int server(unsigned short port, int *stop, player *players) {
   int recvbytes;
   memset((char *)&recvbuf, 0, sizeof(recvbuf));
 
-  char sendbuf[1024];
-  int sendbytes;
-  memset((char *)&sendbuf, 0, sizeof(sendbuf));
+  void *sendbuf = malloc(1024);
+  int sendbytes = 0;
+  memset(sendbuf, 0, 1024);
 
   // create server's listening file descriptor
   printf("Creating server socket...\n");
@@ -46,9 +47,9 @@ int server(unsigned short port, int *stop, player *players) {
     return EXIT_ERROR;
   }
 
-  // server address (will be localhost:port)
   printf("Configuring...\n");
 
+  // server address (will be localhost:port)
   struct sockaddr_in addr;
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = htons(INADDR_ANY);
@@ -134,7 +135,9 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data... ");
-          buffer_write(&sendbuf, TYPE_INT, (char*)100, &sendbytes);
+          int data = 100;
+          buffer_write_int(sendbuf, &data, &sendbytes);
+          buffer_send(cfd, sendbuf, &sendbytes);
 
         } else {
 

@@ -23,8 +23,12 @@
 
 #define WARN(char)                                                             \
   {                                                                            \
+    if (!errno) {                                                              \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n");              \
+    } else {                                                                   \
     printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",             \
            strerror(errno));                                                   \
+    }                                                                          \
   }
 
 #define NET_PING 0
