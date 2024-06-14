@@ -10,9 +10,9 @@
 
 #include <sys/select.h>
 
+#include "../include/buffer.h"
 #include "../include/macros.h"
 #include "../include/network.h"
-#include "../include/buffer.h"
 
 // https://csperkins.org/teaching/2009-2010/networked-systems/lab04.pdf
 // https://en.wikibooks.org/wiki/C_Programming/Networking_in_UNIX
@@ -72,8 +72,9 @@ int server(unsigned short port, int *stop, player *players) {
     char override = getchar();
     if (override == 'y' || override == 'Y') {
       int yes = 1;
-      if (setsockopt(listener,SOL_SOCKET,SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-          ERROR("setsockopt error");
+      if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) ==
+          -1) {
+        ERROR("setsockopt error");
       }
     } else {
       return EXIT_ERROR;
@@ -134,9 +135,9 @@ int server(unsigned short port, int *stop, player *players) {
                  cfd);
 
           // send handshake
-          printf("Sending handshake data... ");
-          int data = 100;
-          buffer_write_int(sendbuf, &data, &sendbytes);
+          printf("Sending handshake data...\n");
+          int handskakeinit = 0x01;
+          buffer_write_int(sendbuf, &handskakeinit, &sendbytes);
           buffer_send(cfd, sendbuf, &sendbytes);
 
         } else {

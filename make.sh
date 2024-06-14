@@ -12,9 +12,7 @@ clear
 echo "Setting up..."
 echo;
 rm -rf bin
-rm -rf temp
 mkdir -p bin
-mkdir -p temp
 
 echo "Files to compile:"
 

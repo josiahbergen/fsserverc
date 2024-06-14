@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <signal.h>
@@ -21,12 +21,6 @@ int main(int argc, char *argv[]) {
 
   unsigned short port;
 
-  // printf("unsigned short: %lu\n", sizeof(unsigned short));
-  // printf("short: %lu\n", sizeof(short));
-  // printf("int: %lu\n", sizeof(int));
-  // printf("long: %lu\n", sizeof(long));
-  // printf("char: %lu\n", sizeof(char));
-
   // FILE *file = fopen("title.txt", "r");
   // if (file == NULL) {
   //   WARN("File error");
@@ -38,6 +32,9 @@ int main(int argc, char *argv[]) {
   // }
 
   // fclose(file);
+
+  printf("\n\033[1;36mFSServerC v0.1 - " WHITE
+         "Copyright Josiah Bergen 2024.\n\n");
 
   // check for command line args
   if (argc == 2) {

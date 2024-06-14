@@ -14,21 +14,6 @@ struct packet {
   char *data;
 };
 
-void printbuffer(char *buffer, int size) {
-  printf(GRAY);
-  for (int i = 0; i < size; i++) {
-      printf(" ");
-      for(int j = 7; j >= 0; j--) {
-          printf("%d", (buffer[i] >> j) & 1);
-      }
-  }
-  printf(" (");
-  for (int i = 0; i < size; i++) {
-    printf("%c", buffer[i]);
-  }
-  printf(")" WHITE "\n");
-}
-
 player *createplayer(int cfd, char *name) {
   // allocate memory for a new player
   player *newplayer = (player *)malloc(sizeof(player));
@@ -94,13 +79,11 @@ void freeplayers(player *head) {
 }
 
 int handlepacket(int cfd, char *recvbuf, int recvbytes) {
-  // print the hex contents of the buffer
   printf("%d byte(s) received from client %u. (1024 max)\n", recvbytes, cfd);
   printf(GRAY "Received data:");
-  printbuffer(recvbuf, recvbytes);
+  print_buffer(recvbuf, recvbytes);
   // reset the buffer
   memset((char *)&recvbuf, 0, sizeof(recvbuf));
-
   return 0;
 }
 
