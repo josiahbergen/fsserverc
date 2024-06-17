@@ -30,13 +30,14 @@ int server(unsigned short port, int *stop, player *players) {
   FD_ZERO(&main);
   FD_ZERO(&read_fds);
 
-  char recvbuf[1024];
-  int recvbytes;
-  memset((char *)&recvbuf, 0, sizeof(recvbuf));
-
   void *sendbuf = malloc(1024);
-  int sendbytes = 0;
+  int sendbytes;
   memset(sendbuf, 0, 1024);
+
+  int recvoffset = sizeof(int);
+  void *recvbuf = malloc(1024 + recvoffset);
+  int recvbytes;
+  memset(recvbuf, 0, 1024 + recvoffset);
 
   // create server's listening file descriptor
   printf("Creating server socket...\n");
@@ -74,7 +75,7 @@ int server(unsigned short port, int *stop, player *players) {
       int yes = 1;
       if (setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) ==
           -1) {
-        ERROR("setsockopt error");
+        ERROR("Setsockopt error");
       }
     } else {
       return EXIT_ERROR;
@@ -136,14 +137,14 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data...\n");
-          int handskakeinit = 0x01;
-          buffer_write_int(sendbuf, &handskakeinit, &sendbytes);
+          u_char handskakeinit = 0x01;
+          buffer_write_u8(sendbuf, &handskakeinit, &sendbytes);
           buffer_send(cfd, sendbuf, &sendbytes);
 
         } else {
 
           // data from an existing connection
-          recvbytes = recv(i, recvbuf, sizeof(recvbuf), 0);
+          recvbytes = recv(i, recvbuf, 1024, 0);
 
           if (recvbytes == -1) {
             // error
@@ -155,7 +156,7 @@ int server(unsigned short port, int *stop, player *players) {
             close(i);
           } else {
             // regular data
-            handlepacket(i, (char *)&recvbuf, recvbytes);
+            handlepacket(i, recvbuf, &recvbytes, players);
           }
         }
       }

@@ -1,9 +1,10 @@
 
 #ifndef BUFFER_H
 #define BUFFER_H
-int buffer_write_int(void *sendbuf, int *data, int *sendbytes);
-// int buffer_read(char *buffer, int type, char *data);
-void buffer_send(int cfd, char *sendbuf, int *sendbytes);
+int buffer_write_u8(void *sendbuf, unsigned char *data, int *sendbytes);
+unsigned char buffer_read_u8(void *recvbuf, int *recvbytes);
+
+void buffer_send(int cfd, void *sendbuf, int *sendbytes);
 void buffer_clear(void *buf, int *pos);
 
 void print_buffer(char *buffer, int size);

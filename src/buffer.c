@@ -12,42 +12,60 @@
 
 void buffer_clear(void *buf, int *pos) {
   printf(GRAY "Clearing buffer... ");
-  int size = sizeof(buf);
-  memset(buf, 0, size);
-  printf("%d byte(s) cleared.\n" WHITE, size);
+  memset(buf, 0, *pos);
+  printf("%d byte(s) cleared.\n" WHITE, *pos);
   *pos = 0;
 }
 
 void print_buffer(char *buffer, int size) {
   printf(GRAY);
   for (int i = 0; i < size; i++) {
-    printf(" ");
     for (int j = 7; j >= 0; j--) {
       printf("%d", (buffer[i] >> j) & 1);
     }
+    printf(" ");
   }
-  printf(" (");
+  printf("(");
   for (int i = 0; i < size; i++) {
     printf("%c", buffer[i]);
   }
   printf(")" WHITE "\n");
 }
 
-int buffer_write_int(void *sendbuf, int *data, int *sendbytes) {
+int buffer_write_u8(void *sendbuf, u_char *data, int *sendbytes) {
   if (sendbuf == NULL) {
     WARN("Sendbuf is NULL");
     return -1;
   }
-  int size = sizeof(int);
+  int size = sizeof(u_char);
   memmove(sendbuf + *sendbytes, data, size);
   *sendbytes += size;
-  printf(GRAY "Wrote %d bytes to the send buffer.\n" WHITE, size);
+  printf(GRAY "Wrote %d byte(s) to the send buffer.\n" WHITE, size);
   return size;
 }
 
-// int buffer_read(char *buffer, int type, char *data) {
-//     return 0;
-// }
+unsigned char buffer_read_u8(void *recvbuf, int *recvbytes) {
+  if (recvbuf == NULL) {
+    WARN("Recvbuf is NULL");
+    return 0;
+  }
+  u_char data;
+  int pos;
+  memcpy(&pos, recvbuf + 1024, sizeof(int));
+
+  if (pos + 1 > *recvbytes) {
+    WARN("buffer overflow womp womp (this is really bad)");
+    return 0;
+  }
+
+  memmove(&data, recvbuf + pos, sizeof(u_char));
+  printf(GRAY "Read %lu byte(s) from position %d.\n" WHITE, sizeof(u_char),
+         pos);
+
+  pos += 1;
+  memcpy(recvbuf + 1024, &pos, 4);
+  return data;
+}
 
 void buffer_send(int cfd, void *sendbuf, int *sendbytes) {
 
@@ -56,7 +74,7 @@ void buffer_send(int cfd, void *sendbuf, int *sendbytes) {
   if (bytes_sent == -1) {
     WARN("Send error");
   }
-  printf("%d byte(s) sent. (%d expected.)\n" GRAY "Buffer contents:",
+  printf("%d byte(s) sent. (%d expected.)\n" GRAY "Buffer contents: ",
          bytes_sent, *sendbytes);
 
   print_buffer(sendbuf, *sendbytes);

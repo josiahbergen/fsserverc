@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
   // fclose(file);
 
-  printf("\n\033[1;36mFSServerC v0.1 - " WHITE
+  printf("\n\033[1;36mFSServerC v0.2 - " WHITE
          "Copyright Josiah Bergen 2024.\n\n");
 
   // check for command line args
