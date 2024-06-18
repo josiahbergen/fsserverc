@@ -7,24 +7,20 @@ args="-Wall -Wextra -g"
 # Add -fsanitize=address if memory errors happen.
 # It breaks things when run on Linux.
 
-clear
-
 echo "Setting up..."
-echo;
 rm -rf bin
 mkdir -p bin
 
-echo "Files to compile:"
-
 search_dir="$(pwd)/src"
 files=''
+num_files=0
 
 for entry in $(ls $search_dir/*.c); do
-    echo $entry
+    num_files=$((num_files+1))
     files+=" $entry"
 done
 
-echo;
+echo "$num_files files to compile."
 echo "Compiling..."
 
 # Run the compilation command inside a pseudo-terminal
@@ -39,5 +35,5 @@ if [ $status -eq 1 ]; then
 
 else
     # Compilation completed successfully
-    ./bin/server 64198
+    ./bin/server 64198 2
 fi

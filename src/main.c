@@ -13,6 +13,7 @@
 void INThandler(int);
 
 int stop = 0;
+unsigned short verbosity;
 
 // initialize linked list of players
 player *players = NULL;
@@ -20,6 +21,7 @@ player *players = NULL;
 int main(int argc, char *argv[]) {
 
   unsigned short port;
+  int status = EXIT_SUCCESS;
 
   // FILE *file = fopen("title.txt", "r");
   // if (file == NULL) {
@@ -33,33 +35,46 @@ int main(int argc, char *argv[]) {
 
   // fclose(file);
 
-  printf("\n\033[1;36mFSServerC v0.2 - " WHITE
+  printf("\n\033[1;36mFSSERVERC 0.2 - " WHITE
          "Copyright Josiah Bergen 2024.\n\n");
 
   // check for command line args
-  if (argc == 2) {
+  if (argc == 3) {
     sscanf(argv[1], "%hu", &port);
 
     if (port < 1024) {
-      fprintf(stderr, "\033[1;31mError\033[0;37m: Invalid port number "
-                      ">:(\n\033[0;90mPlease specify a "
-                      "port number greater than 1024.\033[0;37m\n");
-      exit(1);
+      fprintf(stderr, "\033[1;31mError: Invalid port number "
+                      ">:( " GRAY "\nPlease specify a "
+                      "port number greater than 1024.\n" WHITE);
+      status = EXIT_ERROR;
+    }
+
+    sscanf(argv[2], "%hu", &verbosity);
+
+    if (verbosity < 0 || verbosity > 2) {
+      fprintf(stderr, "\033[1;31mError: Invalid verbosity level "
+                      ">:(" GRAY "\nPlease specify a "
+                      "number between 0 and 2 (inclusive).\n" WHITE);
+      status = EXIT_ERROR;
     }
 
   } else {
-    printf("\033[1;33mWarning\033[0;37m: No port specified, using a random "
-           "avalible port.\n");
-    port = 0;
+    fprintf(stderr,
+            "\033[1;31mError: Invalid number of arguments "
+            ">:(" WHITE "\nUsage: %s <port> <verbosity>\n",
+            argv[0]);
+    status = EXIT_ERROR;
   }
 
-  // set up signal handler
-  signal(SIGINT, INThandler);
+  if (status == EXIT_SUCCESS) {
+    // set up signal handler
+    signal(SIGINT, INThandler);
 
-  // run the server!
-  int status = server(port, (int *)&stop, players);
+    // run the server!
+    status = server(port, (int *)&stop, players);
+  }
 
-  printf("\nFSServer has quit. %s\033[0;37m\n",
+  printf("\nFSServer has quit. %s\n",
          status == 1 ? "\033[1;31m[EXIT_ERROR]" : "\033[1;32m[EXIT_SUCCESS]");
 
   exit(status == 1 ? 1 : 0);

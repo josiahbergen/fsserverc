@@ -40,8 +40,6 @@ void addplayer(player **head, int cfd, char *name) {
 
   player *newplayer = createplayer(cfd, name);
 
-  // unite for socialism and it's benefits (use a linked list)
-
   // if the linked list is empty, set the new player as the head
   if (*head == NULL) {
     *head = newplayer;
@@ -58,11 +56,22 @@ void addplayer(player **head, int cfd, char *name) {
   current->next = newplayer;
 }
 
+void removeplayer(player **head, int cfd) {
+  // find the player to remove, if not found return 1
+  // if the player to remove is the head, set the head to the next player
+  // else
+  // link the player before the removed player to the player after it
+  // free the player return 0
+  // kill self
+}
+
 void listplayers(player *head) {
+
+  printf(GREEN "Connected players:\n" WHITE);
   player *current = head;
   while (current != NULL) {
-    printf("%s is in room %d. (%u, %u)\n", current->name, current->room,
-           current->posx, current->posy);
+    printf("- Player #%d (%s) is in room %d. (%u, %u)\n", current->fd,
+           current->name, current->room, current->posx, current->posy);
     current = current->next;
   }
 }
@@ -76,34 +85,6 @@ void freeplayers(player *head) {
     // be free
     free(temp);
   }
-}
-
-int handlepacket(int cfd, void *recvbuf, int *recvbytes, player *players) {
-  printf("%d byte(s) received from client %u. (1024 max)\n", *recvbytes, cfd);
-
-  u_char msgid = buffer_read_u8(recvbuf, recvbytes);
-
-  switch (msgid) {
-  case NET_PING:
-    printf("Got NET_PING from #%d: ", cfd);
-    break;
-  case NET_PLAYER_ESTABLISH:
-    printf("Got NET_PLAYER_ESTABLISH from #%d: ", cfd);
-    print_buffer(recvbuf, *recvbytes);
-    addplayer(&players, cfd, "test");
-    listplayers(players);
-    break;
-  default:
-    WARN("Unknown packet ID");
-    printf(GRAY "Packet ID is %d.\n" WHITE, msgid);
-    return 1;
-    break;
-  }
-
-  // reset the buffer
-  printf(GRAY "Resetting buffer...\n" WHITE);
-  memset(recvbuf, 0, sizeof(recvbuf));
-  return 0;
 }
 
 // void broadcastPacket(int *recvbuf, int recvbytes, int *clients, int fdmax) {}

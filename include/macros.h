@@ -17,7 +17,11 @@
 
 #define ERROR(char)                                                            \
   {                                                                            \
-    printf("\033[1;31m" char WHITE ": %s.\n", strerror(errno));                \
+    if (!errno) {                                                              \
+      printf("\033[1;31mError: " char ".\n" WHITE);                            \
+    } else {                                                                   \
+      printf("\033[1;31m" char ": %s.\n" WHITE, strerror(errno));              \
+    }                                                                          \
     return EXIT_ERROR;                                                         \
   }
 
@@ -26,8 +30,8 @@
     if (!errno) {                                                              \
       printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n");              \
     } else {                                                                   \
-    printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",             \
-           strerror(errno));                                                   \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",           \
+             strerror(errno));                                                 \
     }                                                                          \
   }
 

@@ -66,9 +66,9 @@ int server(unsigned short port, int *stop, player *players) {
   printf("Binding...\n");
 
   if (bind(listener, (struct sockaddr *)&addr, sizeof(addr))) {
-    WARN("Bind error");
+    ERROR("Bind error");
 
-    // override option
+    // override option (not used)
     printf("Override? [y/n] ");
     char override = getchar();
     if (override == 'y' || override == 'Y') {
@@ -137,8 +137,8 @@ int server(unsigned short port, int *stop, player *players) {
 
           // send handshake
           printf("Sending handshake data...\n");
-          u_char handskakeinit = 0x01;
-          buffer_write_u8(sendbuf, &handskakeinit, &sendbytes);
+          unsigned char handskakedata = NET_PLAYER_ESTABLISH;
+          buffer_write_u8(&handskakedata, sendbuf, &sendbytes);
           buffer_send(cfd, sendbuf, &sendbytes);
 
         } else {
@@ -147,16 +147,57 @@ int server(unsigned short port, int *stop, player *players) {
           recvbytes = recv(i, recvbuf, 1024, 0);
 
           if (recvbytes == -1) {
-            // error
             WARN("Recv error");
+
           } else if (recvbytes == 0) {
+
             // client disconnect
             printf(YELLOW "Client %u has disconnnected." WHITE "\n", i);
             FD_CLR(i, &main);
             close(i);
+
           } else {
-            // regular data
-            handlepacket(i, recvbuf, &recvbytes, players);
+
+            // regular data!!
+
+            printf("%d byte(s) received from client %u. (1024 max)\n",
+                   recvbytes, i);
+            printf("Data received: ");
+            print_buffer(recvbuf, &recvbytes);
+
+            // get the message ID
+            unsigned char msgid;
+            if (buffer_read_u8(&msgid, recvbuf, &recvbytes)) {
+              ERROR("Buffer failed to read");
+            }
+
+            // big fancy switch statement
+            switch (msgid) {
+            case NET_PING:
+              printf("Got NET_PING from #%d.\n", i);
+              break;
+            case NET_PLAYER_ESTABLISH:
+              printf("Got NET_PLAYER_ESTABLISH from #%d.\n", i);
+              char name[16];
+              if (buffer_read_string(name, 16, recvbuf, &recvbytes)) {
+                ERROR("Buffer failed to read");
+              }
+              addplayer(&players, i, name);
+              listplayers(players);
+              unsigned char handskakedata = NET_PLAYER_CONNECT;
+              buffer_write_u8(&handskakedata, sendbuf, &sendbytes);
+              buffer_send(i, sendbuf, &sendbytes);
+              break;
+            default:
+              printf("\033[1;33mWarning (non-fatal): " WHITE
+                     "Unknown message ID (%hu).\n",
+                     msgid);
+              break;
+            }
+
+            // reset the buffer
+            printf(GRAY "Done data handling. Resetting buffer...\n" WHITE);
+            memset(recvbuf, 0, 1024 + recvoffset);
           }
         }
       }
