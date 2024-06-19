@@ -56,14 +56,14 @@ void addplayer(player **head, int cfd, char *name) {
   current->next = newplayer;
 }
 
-void removeplayer(player **head, int cfd) {
+//void removeplayer(player **head, int cfd) {
   // find the player to remove, if not found return 1
   // if the player to remove is the head, set the head to the next player
   // else
   // link the player before the removed player to the player after it
   // free the player return 0
   // kill self
-}
+//}
 
 void listplayers(player *head) {
 

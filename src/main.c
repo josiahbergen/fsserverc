@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
   // fclose(file);
 
-  printf("\n\033[1;36mFSSERVERC 0.2 - " WHITE
+  printf("\n\033[1;36mFSSERVERC 0.3 - " WHITE
          "Copyright Josiah Bergen 2024.\n\n");
 
   // check for command line args
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
     sscanf(argv[2], "%hu", &verbosity);
 
-    if (verbosity < 0 || verbosity > 2) {
+    if (verbosity > 2) {
       fprintf(stderr, "\033[1;31mError: Invalid verbosity level "
                       ">:(" GRAY "\nPlease specify a "
                       "number between 0 and 2 (inclusive).\n" WHITE);

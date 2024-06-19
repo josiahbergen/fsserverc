@@ -82,9 +82,12 @@ int buffer_read_string(char data[], int maxlen, void *recvbuf, int *recvbytes) {
     ERROR("Buffer overflow");
   }
 
-  while (*(char *)(recvbuf + len) != '\0' && len < maxlen) {
+  while (*(char *)(recvbuf + len + pos) != '\0' && len < maxlen) {
     len++;
   }
+
+  // 'data', here, is a pointer. 'char data[]' decayed to a pointer to its 
+  // first element upon being passed to the function... because C
 
   memmove(data, recvbuf + pos, len);
   printf(GRAY "Read %d byte(s) from position %d.\n" WHITE, len, pos);

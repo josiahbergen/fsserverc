@@ -31,12 +31,12 @@ int server(unsigned short port, int *stop, player *players) {
   FD_ZERO(&read_fds);
 
   void *sendbuf = malloc(1024);
-  int sendbytes;
+  int sendbytes = 0;
   memset(sendbuf, 0, 1024);
 
   int recvoffset = sizeof(int);
   void *recvbuf = malloc(1024 + recvoffset);
-  int recvbytes;
+  int recvbytes = 0;
   memset(recvbuf, 0, 1024 + recvoffset);
 
   // create server's listening file descriptor
