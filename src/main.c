@@ -35,35 +35,40 @@ int main(int argc, char *argv[]) {
 
   // fclose(file);
 
-  printf("\n\033[1;36mFSSERVERC 0.3 - " WHITE
-         "Copyright Josiah Bergen 2024.\n\n");
+  printf("\n\033[1;36m*** FSSERVERC 1.3 ***" WHITE "\n\n");
 
   // check for command line args
   if (argc == 3) {
     sscanf(argv[1], "%hu", &port);
 
     if (port < 1024) {
-      fprintf(stderr, "\033[1;31mError: Invalid port number "
-                      ">:( " GRAY "\nPlease specify a "
-                      "port number greater than 1024.\n" WHITE);
       status = EXIT_ERROR;
+      fprintf(stderr, "\033[1;31mError: Invalid port number >:( " GRAY 
+              "\nPlease specify a port number greater than 1024.\n" WHITE);
     }
 
     sscanf(argv[2], "%hu", &verbosity);
 
     if (verbosity > 2) {
-      fprintf(stderr, "\033[1;31mError: Invalid verbosity level "
-                      ">:(" GRAY "\nPlease specify a "
-                      "number between 0 and 2 (inclusive).\n" WHITE);
       status = EXIT_ERROR;
+      fprintf(stderr, "\033[1;31mError: Invalid verbosity level >:(" GRAY 
+              "\nPlease specify a number between 0 and 2 (inclusive).\n" WHITE);
     }
 
   } else {
-    fprintf(stderr,
-            "\033[1;31mError: Invalid number of arguments "
-            ">:(" WHITE "\nUsage: %s <port> <verbosity>\n",
-            argv[0]);
-    status = EXIT_ERROR;
+
+    char *flag = "--help";
+
+    if (argc == 2 && strcmp(argv[1], flag) == 0) {
+      printf(BGREEN "Usage: server <port> <verbosity>\n\n"
+              BWHITE "Port: " WHITE "Network port to run FSServer on. Must be an integer greater than 1024.\n"
+              BWHITE "Verbosity: " WHITE "Control the verbosity of FSServer's output. 0 for minimal (warnings + errors only), 1 for normal, 2 for EVERYTHING.\n");
+      EXIT(EXIT_SUCCESS);
+    } else {
+        status = EXIT_ERROR;
+        fprintf(stderr, BRED "Error: Invalid number of arguments >:(" WHITE 
+            "\n\nType 'server --help' for more info.\n");
+    }
   }
 
   if (status == EXIT_SUCCESS) {
@@ -73,17 +78,12 @@ int main(int argc, char *argv[]) {
     // run the server!
     status = server(port, (int *)&stop, players);
   }
-
-  printf("\nFSServer has quit. %s\n",
-         status == 1 ? "\033[1;31m[EXIT_ERROR]" : "\033[1;32m[EXIT_SUCCESS]");
-
-  exit(status == 1 ? 1 : 0);
+  EXIT(status);
 }
 
 void INThandler(int sig) {
   signal(sig, SIG_IGN); // not sure what this does
   printf("\n\n" GRAY "Cleaning up...\n" WHITE);
   freeplayers(players);
-  printf("FSServer has quit. \033[1;32m[EXIT_SUCCESS]\n" WHITE);
-  exit(1);
+  EXIT(EXIT_SUCCESS);
 }

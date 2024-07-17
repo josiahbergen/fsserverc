@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #ifndef MACROS_H
 #define MACROS_H
 
@@ -10,30 +12,36 @@
 // terminal colors :)
 #define WHITE "\033[0;37m"
 #define GREEN "\033[0;32m"
-#define BGREEN "\033[1;32m"
 #define YELLOW "\033[0;33m"
 #define RED "\033[0;31m"
 #define GRAY "\033[0;90m"
 
-#define ERROR(char)                                                            \
-  {                                                                            \
-    if (!errno) {                                                              \
-      printf("\033[1;31mError: " char ".\n" WHITE);                            \
-    } else {                                                                   \
-      printf("\033[1;31m" char ": %s.\n" WHITE, strerror(errno));              \
-    }                                                                          \
-    return EXIT_ERROR;                                                         \
-  }
+#define BWHITE "\033[1;37m"
+#define BGREEN "\033[1;32m"
+#define BRED "\033[1;31m"
 
-#define WARN(char)                                                             \
-  {                                                                            \
-    if (!errno) {                                                              \
-      printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n");              \
-    } else {                                                                   \
-      printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",           \
-             strerror(errno));                                                 \
-    }                                                                          \
-  }
+#define ERROR(char) do { \
+  if (!errno) { \
+    printf("\033[1;31mError: " char ".\n" WHITE); \
+  } else { \
+    printf("\033[1;31m" char ": %s.\n" WHITE, strerror(errno)); \
+  } \
+  return EXIT_ERROR; \
+} while (0)
+
+#define WARN(char) do { \
+    if (!errno) { \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n"); \
+    } else { \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n", \
+             strerror(errno)); \
+    } \
+} while (0)
+
+#define EXIT(status) do { \
+    printf("\nFSServer has quit. %s\n\n" WHITE, (status) == 1 ? BRED "[EXIT_ERROR]" : BGREEN "[EXIT_SUCCESS]"); \
+    exit(status); \
+} while (0)
 
 #define NET_PING 0
 #define NET_PLAYER_ESTABLISH 1
