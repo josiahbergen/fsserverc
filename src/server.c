@@ -26,6 +26,8 @@ int server(unsigned short port, int *stop, player *players) {
   int fdmax;       // maximum file descriptor number
   int cfd;         // newly accept()ed socket descriptor
 
+  printf("Setting up... ");
+
   // clear the master and temp sets
   FD_ZERO(&main);
   FD_ZERO(&read_fds);
@@ -40,7 +42,7 @@ int server(unsigned short port, int *stop, player *players) {
   memset(recvbuf, 0, 1024 + recvoffset);
 
   // create server's listening file descriptor
-  printf("Creating server socket...\n");
+  // printf("Creating server socket...\n");
 
   const int listener = socket(PF_INET, SOCK_STREAM, 0);
   if (listener < 0) {
@@ -48,7 +50,7 @@ int server(unsigned short port, int *stop, player *players) {
     return EXIT_ERROR;
   }
 
-  printf("Configuring...\n");
+  // printf("Configuring...\n");
 
   // server address (will be localhost:port)
   struct sockaddr_in addr;
@@ -63,7 +65,7 @@ int server(unsigned short port, int *stop, player *players) {
   socklen_t caddr_len = sizeof(caddr);
 
   // bind the socket
-  printf("Binding...\n");
+  // printf("Binding...\n");
 
   if (bind(listener, (struct sockaddr *)&addr, sizeof(addr))) {
     ERROR("Bind error");
@@ -83,13 +85,13 @@ int server(unsigned short port, int *stop, player *players) {
   }
 
   // listen on the port
-  printf("Listening...\n");
+  // printf("Listening...\n");
 
   if (listen(listener, 10)) { // 10 is the maximum pending connections
     ERROR("Listen error");
   }
 
-  printf("Creating file descriptor sets...\n");
+  // printf("Creating file descriptor sets...\n");
   // add the listener to the master set
   FD_SET(listener, &main);
 
@@ -97,7 +99,7 @@ int server(unsigned short port, int *stop, player *players) {
   fdmax = listener; // so far, it's this one
 
   // setup complete!
-  printf("Setup complete!\n\n");
+  printf("complete!\n\n");
 
   printf(BGREEN "Server is running! " WHITE "( " GRAY "%s:%d" WHITE " )\n",
          inet_ntoa(addr.sin_addr), (int)ntohs(addr.sin_port));

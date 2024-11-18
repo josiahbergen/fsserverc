@@ -21,15 +21,13 @@ debug: setup compile debugrun
 
 setup:
 	@clear
-	@echo -n "Setting up... "
+	@echo "Setting up... "
 	@rm -rf $(OUTPUT_DIR)
 	@mkdir -p $(OUTPUT_DIR)
-	@echo "done."
 
 compile:
-	@echo -n "Compiling... "
+	@echo "Compiling... "
 	@$(CC) $(CFLAGS) -o $(OUTPUT_FILE) $(SRC)
-	@echo "done."
 
 run:
 	@./bin/server $(PORT) $(VERBOSITY)

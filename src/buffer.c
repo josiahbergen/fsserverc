@@ -20,10 +20,7 @@ void buffer_clear(void *buf, int *pos) {
 void print_buffer(char *buffer, int *size) {
   printf(GRAY);
   for (int i = 0; i < *size; i++) {
-    for (int j = 7; j >= 0; j--) {
-      printf("%d", (buffer[i] >> j) & 1);
-    }
-    printf(" ");
+    printf("%02X ", (unsigned char)buffer[i]);
   }
   printf("(");
   for (int i = 0; i < *size; i++) {
@@ -31,6 +28,7 @@ void print_buffer(char *buffer, int *size) {
   }
   printf(")" WHITE "\n");
 }
+
 
 int buffer_get_pos(int *pos, void *buffer, int *maxbytes) {
   memcpy(pos, buffer + 1024, sizeof(int));
@@ -86,7 +84,7 @@ int buffer_read_string(char data[], int maxlen, void *recvbuf, int *recvbytes) {
     len++;
   }
 
-  // 'data', here, is a pointer. 'char data[]' decayed to a pointer to its 
+  // 'data', here, is a pointer. 'char data[]' decayed to a pointer to its
   // first element upon being passed to the function... because C
 
   memmove(data, recvbuf + pos, len);

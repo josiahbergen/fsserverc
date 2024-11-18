@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
     if (port < 1024) {
       status = EXIT_ERROR;
-      fprintf(stderr, "\033[1;31mError: Invalid port number >:( " GRAY 
+      fprintf(stderr, "\033[1;31mError: Invalid port number >:( " GRAY
               "\nPlease specify a port number greater than 1024.\n" WHITE);
     }
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 
     if (verbosity > 2) {
       status = EXIT_ERROR;
-      fprintf(stderr, "\033[1;31mError: Invalid verbosity level >:(" GRAY 
+      fprintf(stderr, "\033[1;31mError: Invalid verbosity level >:(" GRAY
               "\nPlease specify a number between 0 and 2 (inclusive).\n" WHITE);
     }
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
       EXIT(EXIT_SUCCESS);
     } else {
         status = EXIT_ERROR;
-        fprintf(stderr, BRED "Error: Invalid number of arguments >:(" WHITE 
+        fprintf(stderr, BRED "Error: Invalid number of arguments >:(" WHITE
             "\n\nType 'server --help' for more info.\n");
     }
   }
