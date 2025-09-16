@@ -20,28 +20,32 @@
 #define BGREEN "\033[1;32m"
 #define BRED "\033[1;31m"
 
-#define ERROR(char) do { \
-  if (!errno) { \
-    printf("\033[1;31mError: " char ".\n" WHITE); \
-  } else { \
-    printf("\033[1;31m" char ": %s.\n" WHITE, strerror(errno)); \
-  } \
-  return EXIT_ERROR; \
-} while (0)
+#define ERROR(char)                                                            \
+  do {                                                                         \
+    if (!errno) {                                                              \
+      printf("\033[1;31mError: " char ".\n" WHITE);                            \
+    } else {                                                                   \
+      printf("\033[1;31m" char ": %s.\n" WHITE, strerror(errno));              \
+    }                                                                          \
+    return EXIT_ERROR;                                                         \
+  } while (0)
 
-#define WARN(char) do { \
-    if (!errno) { \
-      printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n"); \
-    } else { \
-      printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n", \
-             strerror(errno)); \
-    } \
-} while (0)
+#define WARN(char)                                                             \
+  do {                                                                         \
+    if (!errno) {                                                              \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ".\n");              \
+    } else {                                                                   \
+      printf("\033[1;33mWarning (non-fatal): " WHITE char ": %s.\n",           \
+             strerror(errno));                                                 \
+    }                                                                          \
+  } while (0)
 
-#define EXIT(status) do { \
-    printf("\nFSServer has quit. %s\n\n" WHITE, (status) == 1 ? BRED "[EXIT_ERROR]" : BGREEN "[EXIT_SUCCESS]"); \
-    exit(status); \
-} while (0)
+#define EXIT(status)                                                           \
+  do {                                                                         \
+    printf("\nFSServer has quit. %s" WHITE,                                    \
+           (status) == 1 ? BRED "[EXIT_ERROR]" : BGREEN "[EXIT_SUCCESS]");     \
+    exit(status);                                                              \
+  } while (0)
 
 #define NET_PING 0
 #define NET_PLAYER_ESTABLISH 1

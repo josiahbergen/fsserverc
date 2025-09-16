@@ -43,7 +43,8 @@ int main(int argc, char *argv[]) {
 
     if (port < 1024) {
       status = EXIT_ERROR;
-      fprintf(stderr, "\033[1;31mError: Invalid port number >:( " GRAY
+      fprintf(stderr,
+              "\033[1;31mError: Invalid port number >:( " GRAY
               "\nPlease specify a port number greater than 1024.\n" WHITE);
     }
 
@@ -51,7 +52,8 @@ int main(int argc, char *argv[]) {
 
     if (verbosity > 2) {
       status = EXIT_ERROR;
-      fprintf(stderr, "\033[1;31mError: Invalid verbosity level >:(" GRAY
+      fprintf(stderr,
+              "\033[1;31mError: Invalid verbosity level >:(" GRAY
               "\nPlease specify a number between 0 and 2 (inclusive).\n" WHITE);
     }
 
@@ -60,14 +62,17 @@ int main(int argc, char *argv[]) {
     char *flag = "--help";
 
     if (argc == 2 && strcmp(argv[1], flag) == 0) {
-      printf(BGREEN "Usage: server <port> <verbosity>\n\n"
-              BWHITE "Port: " WHITE "Network port to run FSServer on. Must be an integer greater than 1024.\n"
-              BWHITE "Verbosity: " WHITE "Control the verbosity of FSServer's output. 0 for minimal (warnings + errors only), 1 for normal, 2 for EVERYTHING.\n");
+      printf(BGREEN
+             "Usage: server <port> <verbosity>\n\n" BWHITE "Port: " WHITE
+             "Network port to run FSServer on. Must be an integer greater than "
+             "1024.\n" BWHITE "Verbosity: " WHITE
+             "Control the verbosity of FSServer's output. 0 for minimal "
+             "(warnings + errors only), 1 for normal, 2 for EVERYTHING.\n");
       EXIT(EXIT_SUCCESS);
     } else {
-        status = EXIT_ERROR;
-        fprintf(stderr, BRED "Error: Invalid number of arguments >:(" WHITE
-            "\n\nType 'server --help' for more info.\n");
+      status = EXIT_ERROR;
+      fprintf(stderr, BRED "Error: Invalid number of arguments >:(" WHITE
+                           "\n\nType 'server --help' for more info.\n");
     }
   }
 

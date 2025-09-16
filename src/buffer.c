@@ -8,7 +8,6 @@
 #include <sys/socket.h>
 
 #include "../include/macros.h"
-#include "../include/network.h"
 
 void buffer_clear(void *buf, int *pos) {
   printf(GRAY "Clearing buffer... ");
@@ -28,7 +27,6 @@ void print_buffer(char *buffer, int *size) {
   }
   printf(")" WHITE "\n");
 }
-
 
 int buffer_get_pos(int *pos, void *buffer, int *maxbytes) {
   memcpy(pos, buffer + 1024, sizeof(int));
